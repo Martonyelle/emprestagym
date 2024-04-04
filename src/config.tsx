@@ -1,13 +1,27 @@
-import * as config from '../config.json'; // Certifique-se de que o caminho esteja correto
+import * as config from '../config.json';
 import { GoogleAuthProvider, EmailAuthProvider } from "firebase/auth";
 import { isLogLevelString } from './@shared/helpers/helpers';
 
-// Como não temos ambientes específicos, usaremos apiUrl diretamente
-const API_URL: string = config.apiUrl;
+const RUN_LOCAL =  config.runLocal;
 
-const LOG_LEVEL = isLogLevelString(config.logLevel) ? config.logLevel : 'silent';
+let API_URL: string;
+switch (config.environment) {
+    case 'prod':
+        API_URL = config.apiUrl.prod;
+        break;
+    case 'qa':
+        API_URL = config.apiUrl.qa;
+        break;
+    case 'dev':
+        API_URL = config.apiUrl.dev;
+        break;
+    default:
+        API_URL = config.apiUrl.prod;
+        break;
+}
 
-// Configuração do Firebase simplificada sem ambientes específicos
+const LOG_LEVEL = isLogLevelString(config.logLevel) ? config.logLevel: 'silent';
+
 const firebaseConfig = {
     apiKey: config.apiKey,
     authDomain: config.authDomain,
@@ -18,23 +32,21 @@ const firebaseConfig = {
     measurementId: config.measurementId
 };
 
-// Opções padrão de login
 const DEFAULT_SIGN_IN_OPTIONS = [
     GoogleAuthProvider.PROVIDER_ID,
     EmailAuthProvider.PROVIDER_ID
 ];
 
-// Configuração da Algolia simplificada sem ambientes específicos
 const algoliaConfig = {
     appId: config.algolia.appId,
     apiKey: config.algolia.apiKey
 }
 
-// Exportando as configurações para uso em outros locais do projeto
 export {
     firebaseConfig,
     algoliaConfig,
     DEFAULT_SIGN_IN_OPTIONS,
     API_URL,
+    RUN_LOCAL,
     LOG_LEVEL
-};
+}
