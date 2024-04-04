@@ -5,7 +5,7 @@ import { Authenticator, FirebaseCMSApp } from "firecms";
 import "typeface-rubik";
 import "@fontsource/ibm-plex-mono";
 import { firebaseConfig } from "./config";
-import { productsCollection } from "./collections/products";
+import { equipamentsCollection } from "./collections/equipaments";
 
 // Supondo que AuthControllerType e PathType sejam os tipos apropriados
 // Substitua `any` pelos tipos corretos se disponíveis
@@ -36,7 +36,7 @@ export default function App() {
         name={"Empresta Gym"}
         plugins={[dataEnhancementPlugin]}
         authentication={myAuthenticator}
-        collections={[productsCollection]}
+        collections={[equipamentsCollection]}
         firebaseConfig={firebaseConfig}
     />;
 }

@@ -1,7 +1,7 @@
 import { buildCollection, buildProperty, EntityReference } from "firecms";
 import { localeCollection } from "./locales.tsx";
 
-export type Product = {
+export type Equipament = {
     name: string;
     price: number;
     status: string;
@@ -20,13 +20,13 @@ export type Product = {
 }
 
 
-export const productsCollection = buildCollection<Product>({
-    name: "Products",
-    singularName: "Product",
-    path: "products",
+export const equipamentsCollection = buildCollection<Equipament>({
+    name: "Equipaments",
+    singularName: "Equipament",
+    path: "equipament",
     icon: "LocalGroceryStore",
-    group: "E-commerce",
-    permissions: ({ authController, user }) => ({
+    group: "Location",
+    permissions: ({}) => ({
         read: true,
         edit: true,
         create: true,
@@ -45,22 +45,21 @@ export const productsCollection = buildCollection<Product>({
             name: "Price",
             validation: {
                 required: true,
-                requiredMessage: "You must set a price between 0 and 1000",
+                requiredMessage: "Você precisa colocar um preço entre 0 e 10000",
                 min: 0,
                 max: 1000
             },
-            description: "Price with range validation",
+            description: "Preço com range de validação",
             dataType: "number"
         },
         status: {
             name: "Status",
             validation: { required: true },
             dataType: "string",
-            description: "Should this product be visible in the website",
-            longDescription: "Example of a long description hidden under a tooltip. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin quis bibendum turpis. Sed scelerisque ligula nec nisi pellentesque, eget viverra lorem facilisis. Praesent a lectus ac ipsum tincidunt posuere vitae non risus. In eu feugiat massa. Sed eu est non velit facilisis facilisis vitae eget ante. Nunc ut malesuada erat. Nullam sagittis bibendum porta. Maecenas vitae interdum sapien, ut aliquet risus. Donec aliquet, turpis finibus aliquet bibendum, tellus dui porttitor quam, quis pellentesque tellus libero non urna. Vestibulum maximus pharetra congue. Suspendisse aliquam congue quam, sed bibendum turpis. Aliquam eu enim ligula. Nam vel magna ut urna cursus sagittis. Suspendisse a nisi ac justo ornare tempor vel eu eros.",
+            description: "Esse produto está avaliado para locação",
             enumValues: {
-                private: "Private",
-                public: "Public"
+                private: "Sim",
+                public: "Não"
             }
         },
         published: ({ values }) => buildProperty({
@@ -103,7 +102,7 @@ export const productsCollection = buildCollection<Product>({
         },
         description: {
             name: "Description",
-            description: "This is the description of the product",
+            description: "Essa é a descrição do produto",
             multiline: true,
             longDescription: "Example of a long description hidden under a tooltip. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin quis bibendum turpis. Sed scelerisque ligula nec nisi pellentesque, eget viverra lorem facilisis. Praesent a lectus ac ipsum tincidunt posuere vitae non risus. In eu feugiat massa. Sed eu est non velit facilisis facilisis vitae eget ante. Nunc ut malesuada erat. Nullam sagittis bibendum porta. Maecenas vitae interdum sapien, ut aliquet risus. Donec aliquet, turpis finibus aliquet bibendum, tellus dui porttitor quam, quis pellentesque tellus libero non urna. Vestibulum maximus pharetra congue. Suspendisse aliquam congue quam, sed bibendum turpis. Aliquam eu enim ligula. Nam vel magna ut urna cursus sagittis. Suspendisse a nisi ac justo ornare tempor vel eu eros.",
             dataType: "string",
@@ -146,7 +145,7 @@ export const productsCollection = buildCollection<Product>({
             keyValue: true
         },
         expires_on: {
-            name: "Expires on",
+            name: "Data de vencimento do aluguel",
             dataType: "date"
         }
     }
