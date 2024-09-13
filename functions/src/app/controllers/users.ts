@@ -7,7 +7,7 @@ import {handleError} from "../helpers/errorHandler";
  * Módulo responsável por buscar informações de usuário pelo email
  * @param {Request} req Request do Express
  * @param {Response} res Response do Express
- * @author Iago Nuvem
+ * @author Martonyelle
  */
 const getUserByEmail = async function(req: Request, res: Response) {
   try {
