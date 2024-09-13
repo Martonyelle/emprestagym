@@ -1,19 +1,32 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * import {onCall} from "firebase-functions/v2/https";
- * import {onDocumentWritten} from "firebase-functions/v2/firestore";
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
+import functions = require("firebase-functions");
+import express = require("express");
+import bodyParser = require("body-parser");
+import cors = require("cors");
 
-import {onRequest} from "firebase-functions/v2/https";
-import * as logger from "firebase-functions/logger";
+import {getUserByEmail} from "./app/controllers/users";
 
-// Start writing functions
+// Start writing Firebase functions
 // https://firebase.google.com/docs/functions/typescript
+const app = express();
 
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+app.use(cors());
+app.options("*", cors());
+
+/**
+ * ------------------------------------------
+ *  API Routes
+ * ------------------------------------------
+ */
+app.get("/oauth2callback", async (req: any, res: any) => {
+  res.status(200).send("SUCESSO");
+});
+
+// USERS
+app.post("/users/getByEmail", getUserByEmail);
+
+// CUSTOMS
+exports.app = functions.runWith({
+  memory: "2GB",
+}).https.onRequest(app);

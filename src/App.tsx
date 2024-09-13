@@ -1,5 +1,4 @@
 import { useCallback } from "react";
-import { useDataEnhancementPlugin } from "@firecms/data_enhancement";
 import { User as FirebaseUser } from "firebase/auth";
 import { Authenticator, EntityCollectionsBuilder, FirebaseCMSApp } from "firecms";
 import "typeface-rubik";
@@ -8,17 +7,15 @@ import { firebaseConfig } from "./config";
 import { equipamentsCollection } from "./collections/equipaments";
 import { clientsCollection } from "./collections/client";
 
-// Supondo que AuthControllerType e PathType sejam os tipos apropriados
-// Substitua `any` pelos tipos corretos se disponíveis
 type AuthControllerType = any;
 type PathType = any;
 
 interface AuthController {
-    extra: any; // Substitua `any` pelo tipo correto se disponível
+    extra: any;
   }
   
   interface PathConfig {
-    path: string; // Exemplo básico, ajuste conforme necessário
+    path: string;
   }
 
 export default function App() {
@@ -36,12 +33,6 @@ export default function App() {
         return true;
     }, []);
 
-    const dataEnhancementPlugin = useDataEnhancementPlugin({
-        getConfigForPath: ({ path }: { path: PathType }) => {
-            return true;
-        },
-    });
-
     const collectionsBuilder: EntityCollectionsBuilder = useCallback(() => {
         return [
             equipamentsCollection,
@@ -52,7 +43,6 @@ export default function App() {
 
     return <FirebaseCMSApp
         name={"Empresta Gym"}
-        plugins={[dataEnhancementPlugin]}
         authentication={myAuthenticator}
         collections={collectionsBuilder}
         firebaseConfig={firebaseConfig}

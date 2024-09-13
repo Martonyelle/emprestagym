@@ -32,6 +32,8 @@ const firebaseConfig = {
     measurementId: config.measurementId
 };
 
+console.log("Dados Firebase: ", firebaseConfig)
+
 const DEFAULT_SIGN_IN_OPTIONS = [
     GoogleAuthProvider.PROVIDER_ID,
     EmailAuthProvider.PROVIDER_ID

@@ -78,7 +78,7 @@ export const clientsCollection = buildCollection<Client>({
         complement: {
           dataType: "string",
           name: "Complemento",
-          validation: { minLength: 0 }, // Opcional, dependendo se você quer que seja obrigatório ou não
+          validation: { required: false },
         },
       },
     },
