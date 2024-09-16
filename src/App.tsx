@@ -6,6 +6,8 @@ import "@fontsource/ibm-plex-mono";
 import { firebaseConfig } from "./config";
 import { equipamentsCollection } from "./collections/equipaments";
 import { clientsCollection } from "./collections/client";
+import { allocationsCollection } from "./collections/allocation";
+import { usersCollection } from "./collections/users";
 
 type AuthControllerType = any;
 type PathType = any;
@@ -37,6 +39,8 @@ export default function App() {
         return [
             equipamentsCollection,
             clientsCollection,
+            allocationsCollection,
+            usersCollection,
         ];
     }, []);     
 

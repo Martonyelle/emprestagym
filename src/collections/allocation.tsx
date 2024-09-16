@@ -42,7 +42,7 @@ export const allocationsCollection = buildCollection<Allocation>({
             description: "Lista de equipamentos alocados para o cliente",
             of: {
                 dataType: "reference",
-                path: "equipments"
+                path: "equipament"
             }
         },
         rental_period: {
