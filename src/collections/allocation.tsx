@@ -9,7 +9,6 @@ export type Allocation = {
     };
     rental_price: number;
     payment_method: string;
-    delivery_date: Date;
     return_date: Date;
     delivery_condition: string;
     return_condition: string;
@@ -18,7 +17,7 @@ export type Allocation = {
 export const allocationsCollection = buildCollection<Allocation>({
     name: "Alocações",
     singularName: "Alocação",
-    path: "alocacoes",
+    path: "allocations",
     icon: "Schedule",
     group: "Gestão de Aluguéis",
     permissions: ({}) => ({
@@ -42,7 +41,7 @@ export const allocationsCollection = buildCollection<Allocation>({
             description: "Lista de equipamentos alocados para o cliente",
             of: {
                 dataType: "reference",
-                path: "equipament"
+                path: "equipaments"
             }
         },
         rental_period: {
@@ -82,12 +81,6 @@ export const allocationsCollection = buildCollection<Allocation>({
                 cash: "Dinheiro"
             },
             description: "Método de pagamento escolhido pelo cliente"
-        },
-        delivery_date: {
-            name: "Data de Entrega",
-            dataType: "date",
-            validation: { required: true },
-            description: "Data em que os equipamentos foram entregues"
         },
         return_date: {
             name: "Data de Devolução",

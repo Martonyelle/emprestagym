@@ -41,12 +41,12 @@ export const clientsCollection = buildCollection<Client>({
       dataType: "string"
     },
     phone: {
-      name: "Nome",
+      name: "Telefone",
       validation: { required: true },
       dataType: "string"
     },
     email: {
-      name: "Nome",
+      name: "E-mail",
       validation: { required: true },
       dataType: "string"
     },

@@ -1,29 +1,22 @@
 import { buildCollection, buildProperty, EntityReference } from "firecms";
 import { localeCollection } from "./locales.tsx";
+import { tipoAparelho } from "../@shared/enums/component.tsx";
 
 export type Equipament = {
     name: string;
     price: number;
     status: string;
-    published: boolean;
-    related_products: EntityReference[];
     main_image: string;
-    tags: string[];
     description: string;
     categories: string[];
-    publisher: {
-        name: string;
-        external_id: string;
-    },
-    metadata: object,
-    expires_on: Date
+    metadata: object
 }
 
 
 export const equipamentsCollection = buildCollection<Equipament>({
-    name: "Equipaments",
-    singularName: "Equipament",
-    path: "equipament",
+    name: "Equipamentos",
+    singularName: "Equipamento",
+    path: "equipaments",
     icon: "LocalGroceryStore",
     group: "Location",
     permissions: ({}) => ({
@@ -62,28 +55,7 @@ export const equipamentsCollection = buildCollection<Equipament>({
                 public: "Não"
             }
         },
-        published: ({ values }) => buildProperty({
-            name: "Published",
-            dataType: "boolean",
-            columnWidth: 100,
-            disabled: values.status === "public"
-                ? false
-                : {
-                    clearOnDisabled: true,
-                    disabledMessage: "Status must be public in order to enable this the published flag"
-                }
-
-        }),
-        related_products: {
-            dataType: "array",
-            name: "Related products",
-            description: "Reference to self",
-            of: {
-                dataType: "reference",
-                path: "products"
-            }
-        },
-        main_image: buildProperty({ // The `buildProperty` method is a utility function used for type checking
+        main_image: buildProperty({
             name: "Image",
             dataType: "string",
             storage: {
@@ -91,15 +63,6 @@ export const equipamentsCollection = buildCollection<Equipament>({
                 acceptedFiles: ["image/*"]
             }
         }),
-        tags: {
-            name: "Tags",
-            description: "Example of generic array",
-            validation: { required: true },
-            dataType: "array",
-            of: {
-                dataType: "string"
-            }
-        },
         description: {
             name: "Description",
             description: "Essa é a descrição do produto",
@@ -114,29 +77,7 @@ export const equipamentsCollection = buildCollection<Equipament>({
             dataType: "array",
             of: {
                 dataType: "string",
-                enumValues: {
-                    electronics: "Electronics",
-                    books: "Books",
-                    furniture: "Furniture",
-                    clothing: "Clothing",
-                    food: "Food",
-                    footwear: "Footwear",
-                }
-            }
-        },
-        publisher: {
-            name: "Publisher",
-            description: "This is an example of a map property",
-            dataType: "map",
-            properties: {
-                name: {
-                    name: "Name",
-                    dataType: "string"
-                },
-                external_id: {
-                    name: "External id",
-                    dataType: "string"
-                }
+                enumValues: tipoAparelho
             }
         },
         metadata: {
@@ -144,9 +85,5 @@ export const equipamentsCollection = buildCollection<Equipament>({
             dataType: "map",
             keyValue: true
         },
-        expires_on: {
-            name: "Data de vencimento do aluguel",
-            dataType: "date"
-        }
     }
 });

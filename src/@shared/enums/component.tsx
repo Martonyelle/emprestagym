@@ -30,6 +30,14 @@ const brStatesEnum: EnumValues = {
     TO: { id: 'TO', label: 'Tocantins', color: 'grayLight' }
 };
 
+const tipoAparelho: EnumValues = {
+    inferiores: { id: 'inferiores', label: 'Inferiores', color: 'grayLight' },
+    superiores: { id: 'superiores', label: 'Superiores', color: 'grayLight' },
+    aerobicos: { id: 'aerobicos', label: 'Aeróbicos', color: 'grayLight' },
+    halteres: { id: 'halteres', label: 'Halteres', color: 'grayLight' }
+};
+
+
 const statusEnum: EnumValues = {
     active: { id: 'active', label: 'Ativo', color: 'greenDarker' },
     inactive: { id: 'inactive', label: 'Inativo', color: 'redDark' }
@@ -38,4 +46,5 @@ const statusEnum: EnumValues = {
 export {
     brStatesEnum,
     statusEnum,
+    tipoAparelho
 }
