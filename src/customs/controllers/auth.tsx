@@ -2,12 +2,9 @@ import { AuthController, Authenticator } from "firecms";
 import { getUserDataByEmail } from "./users";
 import { getLocalIp } from "../../@shared/utils";
 
-
-const authenticator: Authenticator<any> = async ({
+const authenticator:Authenticator<any> = async ({
     user, 
-    authController,
-    dataSource,
-    storageSource
+    authController
 }) => {
     const userEmail = user?.email ? user?.email : '';
     let userData: any;
@@ -20,14 +17,14 @@ const authenticator: Authenticator<any> = async ({
     const checkUserAndLogin = async (userEmail: string) => {
         userData = await getUserDataByEmail(userEmail);
         if (!userData.success) {
-            throw new Error("Parece que tivemos algum problema em validar seu usuário, entre em contato com o suporte Guaralabs");
+            throw "Parece que tivemos algum problema em validar seu usuário, entre em contato com o suporte Guaralabs";
         } else {
             userData = userData.data;
             const ip = await getLocalIp();
             userData.ip = ip;
             
             if (userData.status !== 'active') {
-                throw new Error("Seu usuário está inativo, entre em contato com o suporte Guaralabs.");
+                throw "Seu usuário está inativo, entre em contato com o suporte Guaralabs.";
             } else {
                 authController.setExtra({
                     userData: userData
@@ -40,6 +37,8 @@ const authenticator: Authenticator<any> = async ({
     validUser = await checkUserAndLogin(userEmail);
 
     return validUser;
-};
+}
 
-export { authenticator };
+export {
+    authenticator
+}

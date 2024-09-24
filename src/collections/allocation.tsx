@@ -1,114 +1,89 @@
-import { buildCollection, buildProperty, EntityReference } from "firecms";
+import { buildCollection, AdditionalFieldDelegate } from "firecms";
+import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
+import AllocationModal from "../@shared/components/modals/AllocationModal";
+import { ActionButton } from "../@shared/components/atoms/ActionButton";
+import { Allocation } from "../@shared/interface/interfaces";
 
-export type Allocation = {
-    client: EntityReference;
-    equipments: EntityReference[];
-    rental_period: {
-        start_date: Date;
-        end_date: Date;
-    };
-    rental_price: number;
-    payment_method: string;
-    return_date: Date;
-    delivery_condition: string;
-    return_condition: string;
+const actionsField: AdditionalFieldDelegate<Allocation> = {
+    id: "actions",
+    name: "Ações",
+    width: 150,
+    Builder: ({ entity }) => {
+        return (
+            <div className="collection-action-buttons-container">
+                <ActionButton<{
+                    equipmentId: string;
+                }>
+                    title="Alocar"
+                    icon={<AssignmentTurnedInIcon />}
+                    triggerModal={AllocationModal}
+                    data={{
+                        equipmentId: entity.values.equipment.id,
+                    }}
+                    color="primary"
+                />
+                {/* Adicione mais botões de ação conforme necessário */}
+            </div>
+        );
+    }
 };
 
 export const allocationsCollection = buildCollection<Allocation>({
+    path: "allocations",
     name: "Alocações",
     singularName: "Alocação",
-    path: "allocations",
-    icon: "Schedule",
-    group: "Gestão de Aluguéis",
-    permissions: ({}) => ({
+    icon: "AssignmentTurnedIn",
+    group: "Gerenciamento",
+    permissions: ({ authController }) => ({
         read: true,
-        edit: true,
         create: true,
-        delete: true
+        edit: true,
+        delete: true,
     }),
     properties: {
-        client: {
-            name: "Cliente",
-            validation: { required: true },
+        equipment: {
             dataType: "reference",
-            path: "clients",
-            description: "Cliente alocado para o aluguel dos equipamentos"
-        },
-        equipments: {
-            name: "Equipamentos",
+            name: "Equipamento",
+            path: "equipments",
             validation: { required: true },
-            dataType: "array",
-            description: "Lista de equipamentos alocados para o cliente",
-            of: {
-                dataType: "reference",
-                path: "equipaments"
-            }
         },
-        rental_period: {
-            name: "Período de Aluguel",
-            dataType: "map",
-            properties: {
-                start_date: {
-                    name: "Data de Início",
-                    dataType: "date",
-                    validation: { required: true }
-                },
-                end_date: {
-                    name: "Data de Término",
-                    dataType: "date",
-                    validation: { required: true }
-                }
-            },
-            description: "Período no qual os equipamentos serão alugados"
-        },
-        rental_price: {
-            name: "Preço do Aluguel",
-            validation: {
-                required: true,
-                min: 0
-            },
-            dataType: "number",
-            description: "Valor total do aluguel para o período"
+        client: {
+            dataType: "reference",
+            name: "Cliente",
+            path: "clients",
+            validation: { required: true },
         },
         payment_method: {
-            name: "Método de Pagamento",
-            validation: { required: true },
             dataType: "string",
+            name: "Forma de Pagamento",
+            validation: { required: true },
             enumValues: {
                 credit_card: "Cartão de Crédito",
                 debit_card: "Cartão de Débito",
+                cash: "Dinheiro",
                 bank_transfer: "Transferência Bancária",
-                cash: "Dinheiro"
+                pix: "PIX",
             },
-            description: "Método de pagamento escolhido pelo cliente"
         },
-        return_date: {
-            name: "Data de Devolução",
+        rental_duration: {
+            dataType: "number",
+            name: "Duração do Aluguel (meses)",
+            validation: { required: true, min: 1 },
+        },
+        total_cost: {
+            dataType: "number",
+            name: "Custo Total",
+            validation: { required: true },
+        },
+        allocation_date: {
             dataType: "date",
+            name: "Data de Alocação",
             validation: { required: true },
-            description: "Data em que os equipamentos foram devolvidos"
         },
-        delivery_condition: {
-            name: "Condição na Entrega",
-            dataType: "string",
-            validation: { required: true },
-            enumValues: {
-                excellent: "Excelente",
-                good: "Boa",
-                poor: "Ruim"
-            },
-            description: "Condição dos equipamentos no momento da entrega"
-        },
-        return_condition: {
-            name: "Condição na Devolução",
-            dataType: "string",
-            validation: { required: true },
-            enumValues: {
-                excellent: "Excelente",
-                good: "Boa",
-                poor: "Ruim"
-            },
-            description: "Condição dos equipamentos no momento da devolução"
-        }
-    }
+        // ... outras propriedades conforme necessário
+    },
+    additionalFields: [
+        actionsField,
+        // Adicione outros campos adicionais se necessário
+    ],
 });

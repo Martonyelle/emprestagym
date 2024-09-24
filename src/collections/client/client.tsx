@@ -1,5 +1,10 @@
-import { buildCollection, EntityReference } from "firecms";
-import { brStatesEnum } from "../@shared/enums/component";
+import {
+  buildCollection,
+  EntityCallbacks,
+} from "firecms";
+import { brStatesEnum } from "../../@shared/enums/component";
+import { clientsCallbacks } from "./clientCallbacks";
+
 
 export type Client = {
   cpf: string;
@@ -11,44 +16,47 @@ export type Client = {
     city: string;
     street: string;
     number: string;
-    complement: string;
+    complement?: string;
+    postalCode?: string;
   };
   status: string;
-  config: any;
+  config?: any;
+  asaas_customer_id?: string;
 };
 
 export const clientsCollection = buildCollection<Client>({
-  name: "Clients",
-  singularName: "Client",
+  name: "Clientes",
+  singularName: "Cliente",
   path: "clients",
-  icon: "Badge",
-  group: "Manager",
-  permissions: ({}) => ({
+  icon: "Person",
+  group: "Gerenciamento",
+  permissions: ({ authController }) => ({
     read: true,
     edit: true,
     create: true,
-    delete: true
-}),
+    delete: true,
+  }),
+  callbacks: clientsCallbacks,
   properties: {
     cpf: {
-      name: "Identificador",
+      name: "CPF/CNPJ",
       validation: { required: true },
-      dataType: "string"
+      dataType: "string",
     },
     name: {
       name: "Nome",
       validation: { required: true },
-      dataType: "string"
+      dataType: "string",
     },
     phone: {
       name: "Telefone",
       validation: { required: true },
-      dataType: "string"
+      dataType: "string",
     },
     email: {
       name: "E-mail",
       validation: { required: true },
-      dataType: "string"
+      dataType: "string",
     },
     address: {
       dataType: "map",
@@ -80,6 +88,11 @@ export const clientsCollection = buildCollection<Client>({
           name: "Complemento",
           validation: { required: false },
         },
+        postalCode: {
+          dataType: "string",
+          name: "CEP",
+          validation: { required: false },
+        },
       },
     },
     status: {
@@ -88,13 +101,14 @@ export const clientsCollection = buildCollection<Client>({
       dataType: "string",
       enumValues: {
         active: "Ativo",
-        inactive: "Inativo"
-      }
+        inactive: "Inativo",
+      },
     },
-    config: {
-      name: "Configurações",
-      validation: { required: true },
+    asaas_customer_id: {
+      name: "ID do Cliente no Asaas",
       dataType: "string",
-    }
+      readOnly: true,
+      disabled: true,
+    },
   },
 });

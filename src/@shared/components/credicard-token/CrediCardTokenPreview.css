@@ -1,0 +1,21 @@
+.card{
+  width: 90%;
+  height: 12vh;
+  margin-left: 0.5rem;
+  padding: 0.5rem;
+  display: flex;
+  align-items: flex-start;
+  flex-flow: row;
+  justify-content: space-between;
+  background: rgba(45,55,72,0.3) !important;
+}
+
+.card-brand-logo{
+  max-width: 3rem;
+  padding: 0.1rem;
+}
+
+.card-number{
+  width: 100%;
+  text-align: right;
+}

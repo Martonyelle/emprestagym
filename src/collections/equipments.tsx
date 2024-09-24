@@ -2,7 +2,7 @@ import { buildCollection, buildProperty, EntityReference } from "firecms";
 import { localeCollection } from "./locales.tsx";
 import { tipoAparelho } from "../@shared/enums/component.tsx";
 
-export type Equipament = {
+export type Equipment = {
     name: string;
     price: number;
     status: string;
@@ -13,10 +13,10 @@ export type Equipament = {
 }
 
 
-export const equipamentsCollection = buildCollection<Equipament>({
+export const equipmentsCollection = buildCollection<Equipment>({
     name: "Equipamentos",
     singularName: "Equipamento",
-    path: "equipaments",
+    path: "equipments",
     icon: "LocalGroceryStore",
     group: "Location",
     permissions: ({}) => ({

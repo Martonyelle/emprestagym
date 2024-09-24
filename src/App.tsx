@@ -1,13 +1,15 @@
 import { useCallback } from "react";
 import { User as FirebaseUser } from "firebase/auth";
-import { Authenticator, EntityCollectionsBuilder, FirebaseCMSApp } from "firecms";
+import { Authenticator, CMSView, EntityCollectionsBuilder, FirebaseCMSApp } from "firecms";
 import "typeface-rubik";
 import "@fontsource/ibm-plex-mono";
 import { firebaseConfig } from "./config";
-import { equipamentsCollection } from "./collections/equipaments";
-import { clientsCollection } from "./collections/client";
+import { equipmentsCollection } from "./collections/equipments";
+import { clientsCollection } from "./collections/client/client";
 import { allocationsCollection } from "./collections/allocation";
 import { usersCollection } from "./collections/users";
+import RentalDashboard from "./customs/views/data-analitics.tsx/rentalDashboard";
+
 
 type AuthControllerType = any;
 type PathType = any;
@@ -37,16 +39,28 @@ export default function App() {
 
     const collectionsBuilder: EntityCollectionsBuilder = useCallback(() => {
         return [
-            equipamentsCollection,
+            equipmentsCollection,
             clientsCollection,
             allocationsCollection,
             usersCollection,
         ];
     }, []);     
 
+    const customViews: CMSView[] = [
+        {
+          path: "alugados",
+          name: "Alugados",
+          icon: "MonitorHeart",
+          group: "Gestão",
+          description: "Verifique os aparelhos alugados",
+          view: <RentalDashboard />,
+        },
+    ];
+
 
     return <FirebaseCMSApp
         name={"Empresta Gym"}
+        views={customViews}
         authentication={myAuthenticator}
         collections={collectionsBuilder}
         firebaseConfig={firebaseConfig}
