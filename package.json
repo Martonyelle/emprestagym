@@ -7,6 +7,7 @@
     "build": "tsc && vite build",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
+    "post-build": "echo 'Build concluído com sucesso!'",
     "deploy": "yarn run build && firebase deploy --project <your_project_id>"
   },
   "dependencies": {
