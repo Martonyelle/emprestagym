@@ -89,7 +89,6 @@ export const ButtonList = <T,>({ actions = [] }: ButtonListProps<T>) => {
             )}
             <Button
               onClick={clickHandler}
-              disabled={action.disabled || loading}
               startIcon={
                 itemLoading ? (
                   <CircularProgress size={24} />

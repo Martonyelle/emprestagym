@@ -37,7 +37,6 @@ export const EquipmentAllocationButton: React.FC<EquipmentAllocationButtonProps>
   // Especifique o tipo genérico correto para ActionButtonProps
   const actions: ActionButtonProps<AllocationData>[] = [
     {
-      disabled: false,
       title: "Alocar Equipamento",
       icon: <AssignmentTurnedInIcon />,
       showSnackbar: false,

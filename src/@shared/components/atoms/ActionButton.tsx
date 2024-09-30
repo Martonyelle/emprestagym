@@ -7,7 +7,6 @@ export const ActionButton = <T,>({
   icon,
   triggerModal: TriggerModal,
   data,
-  disabled = false,
   clickFn,
   showSnackbar = true,
 }: ActionButtonProps<T>) => {
@@ -29,7 +28,6 @@ export const ActionButton = <T,>({
         startIcon={icon}
         color="primary"
         variant="outlined"
-        disabled={disabled}
         size="small"
       >
         {title}

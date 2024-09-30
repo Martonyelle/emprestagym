@@ -165,7 +165,6 @@ export const SubscriptionItem: React.FC<SubscriptionItemProps> = ({
 
   const actions: ActionButtonProps[] = [
     {
-      disabled: false,
       title: 'Excluir',
       icon: <DeleteIcon />,
       showSnackbar: false,
