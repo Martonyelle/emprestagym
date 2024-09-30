@@ -1,32 +1,5 @@
-import { buildCollection, AdditionalFieldDelegate } from "firecms";
-import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
-import AllocationModal from "../@shared/components/modals/AllocationModal";
-import { ActionButton } from "../@shared/components/atoms/ActionButton";
+import { buildCollection } from "firecms";
 import { Allocation } from "../@shared/interface/interfaces";
-
-const actionsField: AdditionalFieldDelegate<Allocation> = {
-    id: "actions",
-    name: "Ações",
-    width: 150,
-    Builder: ({ entity }) => {
-        return (
-            <div className="collection-action-buttons-container">
-                <ActionButton<{
-                    equipmentId: string;
-                }>
-                    title="Alocar"
-                    icon={<AssignmentTurnedInIcon />}
-                    triggerModal={AllocationModal}
-                    data={{
-                        equipmentId: entity.values.equipment.id,
-                    }}
-                    color="primary"
-                />
-                {/* Adicione mais botões de ação conforme necessário */}
-            </div>
-        );
-    }
-};
 
 export const allocationsCollection = buildCollection<Allocation>({
     path: "allocations",
@@ -80,10 +53,5 @@ export const allocationsCollection = buildCollection<Allocation>({
             name: "Data de Alocação",
             validation: { required: true },
         },
-        // ... outras propriedades conforme necessário
     },
-    additionalFields: [
-        actionsField,
-        // Adicione outros campos adicionais se necessário
-    ],
 });

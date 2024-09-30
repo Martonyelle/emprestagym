@@ -132,24 +132,30 @@ export const SubscriptionItem: React.FC<SubscriptionItemProps> = ({
     clear();
   }
 
-  const handleDeleteSubscription = async () => {
-    const asaasRes = await deleteAsaasSubscription(`${subscription.id}`);
-    if (!asaasRes.success) {
-      const errorMsg = asaasRes.error ? asaasRes.error.message : 'Falha ao excluir cobrança recorrente';
-      throw new Error(errorMsg);
-    } else {
-      removeSubscription(client.id, subscription.id);
-      snackbarController.open({
-        type: 'success',
-        message: (
-          <SnackbarMessage
-            title={'Cobrança excluída com sucesso!'}
-            subtitle={'Recebemos a confirmação do provedor de pagamentos de que a cobrança recorrente foi excluida.'}
-          />
-        )
-      });
+  const handleDeleteSubscription = async (): Promise<{ success: boolean; message?: string }> => {
+    try {
+      const asaasRes = await deleteAsaasSubscription(`${subscription.id}`);
+      if (!asaasRes.success) {
+        const errorMsg = asaasRes.error ? asaasRes.error.message : 'Falha ao excluir cobrança recorrente';
+        throw new Error(errorMsg);
+      } else {
+        removeSubscription(client.id, subscription.id);
+        snackbarController.open({
+          type: 'success',
+          message: (
+            <SnackbarMessage
+              title={'Cobrança excluída com sucesso!'}
+              subtitle={'Recebemos a confirmação do provedor de pagamentos de que a cobrança recorrente foi excluida.'}
+            />
+          )
+        });
+        return { success: true, message: 'Cobrança excluída com sucesso!' };
+      }
+    } catch (error: any) {
+      return { success: false, message: error.message || 'Erro ao excluir cobrança.' };
     }
   }
+  
 
   const clear = () => {
     setPrintInvoiceLoading(false);
@@ -164,7 +170,8 @@ export const SubscriptionItem: React.FC<SubscriptionItemProps> = ({
       icon: <DeleteIcon />,
       showSnackbar: false,
       clickFn: () => handleDeleteSubscription(),
-      color: 'inherit'
+      color: 'inherit',
+      data: undefined
     }
   ];
 

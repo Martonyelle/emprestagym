@@ -1,4 +1,6 @@
+// src/@shared/hooks/collectionData.tsx
 import { FetchCollectionProps, useDataSource, WhereFilterOp } from "firecms";
+import { useCallback } from "react";
 
 interface CollectionDataHookParams<M extends Record<string, any> = any> {
   path: string;
@@ -16,7 +18,7 @@ function useCollectionData<M extends Record<string, any> = any>(
 ) {
   const dataSource = useDataSource();
 
-  const getData = async () => {
+  const getData = useCallback(async () => {
     if (typeof dataSource.fetchCollection !== "function") {
       throw new Error("fetchCollection is not a function on dataSource");
     }
@@ -31,21 +33,34 @@ function useCollectionData<M extends Record<string, any> = any>(
       startAfter: params.startAfter,
       searchString: params.searchString,
     });
-  };
+  }, [
+    dataSource,
+    params.path,
+    params.collection,
+    params.order,
+    params.orderBy,
+    params.filter,
+    params.limit,
+    params.startAfter,
+    params.searchString,
+  ]);
 
-  const saveData = async (
-    data: M,
-    id?: string,
-    status: "new" | "existing" = "new"
-  ) => {
-    return await dataSource.saveEntity({
-      path: params.path,
-      collection: params.collection,
-      values: data,
-      entityId: id,
-      status: status,
-    });
-  };
+  const saveData = useCallback(
+    async (
+      data: M,
+      id?: string,
+      status: "new" | "existing" = "new"
+    ) => {
+      return await dataSource.saveEntity({
+        path: params.path,
+        collection: params.collection,
+        values: data,
+        entityId: id,
+        status: status,
+      });
+    },
+    [dataSource, params.path, params.collection]
+  );
 
   return { getData, saveData };
 }

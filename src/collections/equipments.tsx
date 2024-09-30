@@ -3,13 +3,14 @@ import { localeCollection } from "./locales.tsx";
 import { tipoAparelho } from "../@shared/enums/component.tsx";
 
 export type Equipment = {
+    id: string;
     name: string;
     price: number;
     status: string;
     main_image: string;
     description: string;
     categories: string[];
-    metadata: object
+    available_quantity: number;
 }
 
 
@@ -31,6 +32,11 @@ export const equipmentsCollection = buildCollection<Equipment>({
     properties: {
         name: {
             name: "Name",
+            validation: { required: true },
+            dataType: "string"
+        },
+        id: {
+            name: "Identificador",
             validation: { required: true },
             dataType: "string"
         },
@@ -80,10 +86,9 @@ export const equipmentsCollection = buildCollection<Equipment>({
                 enumValues: tipoAparelho
             }
         },
-        metadata: {
-            name: "Metadata",
-            dataType: "map",
-            keyValue: true
+        available_quantity: {
+            name: "Quantidade Disponivel",
+            dataType: "number",
         },
     }
 });

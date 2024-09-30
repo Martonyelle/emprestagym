@@ -1,9 +1,7 @@
 import {
   buildCollection,
-  EntityCallbacks,
 } from "firecms";
 import { brStatesEnum } from "../../@shared/enums/component";
-import { clientsCallbacks } from "./clientCallbacks";
 
 
 export type Client = {
@@ -36,7 +34,6 @@ export const clientsCollection = buildCollection<Client>({
     create: true,
     delete: true,
   }),
-  callbacks: clientsCallbacks,
   properties: {
     cpf: {
       name: "CPF/CNPJ",
