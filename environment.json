@@ -1,0 +1,5 @@
+{
+  "environment": "DEV",
+  "runLocal": true,
+  "logLevel": "error"
+}

@@ -1,4 +1,6 @@
 import * as config from '../config.json';
+import * as env from '../environment.json';
+
 import { GoogleAuthProvider, EmailAuthProvider } from "firebase/auth";
 import { isLogLevelString } from './@shared/helpers/helpers';
 
@@ -20,7 +22,7 @@ switch (config.environment) {
         break;
 }
 
-const LOG_LEVEL = isLogLevelString(config.logLevel) ? config.logLevel: 'silent';
+export const LOG_LEVEL = isLogLevelString(env.logLevel) ? env.logLevel: 'silent';
 
 const firebaseConfig = {
     apiKey: config.apiKey,
@@ -43,5 +45,4 @@ export {
     DEFAULT_SIGN_IN_OPTIONS,
     API_URL,
     RUN_LOCAL,
-    LOG_LEVEL
 }
