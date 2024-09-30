@@ -1,4 +1,4 @@
-import { fetchData } from "../../helpers/helpers";
+import { fetchData } from "../../@shared/helpers/helpers";
 
 /**
  * Gera um registro único para um novo cliente.
