@@ -4,7 +4,6 @@ import bodyParser = require("body-parser");
 import cors = require("cors");
 
 import {getUserByEmail} from "./app/controllers/users";
-import { createCustomer, deleteCustomer, createSubscription, receiveInCash, handlePaymentsWebhooks } from "./app/controllers/asaasController";
 
 // Start writing Firebase functions
 // https://firebase.google.com/docs/functions/typescript
@@ -23,13 +22,6 @@ app.options("*", cors());
 app.get("/oauth2callback", async (req: any, res: any) => {
   res.status(200).send("SUCESSO");
 });
-
-// Rotas do Asaas
-app.post('/asaas/customer', createCustomer);
-app.delete('/asaas/customer', deleteCustomer);
-app.post('/asaas/subscription', createSubscription);
-app.post('/asaas/payment/cash', receiveInCash);
-app.post('/asaas/webhook', handlePaymentsWebhooks);
 
 // USERS
 app.post("/users/getByEmail", getUserByEmail);
