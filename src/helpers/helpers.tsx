@@ -3,7 +3,6 @@ import { Observable } from "rxjs";
 import { API_URL } from "../config";
 import { getAuthToken } from "./authHelpers";
 import { APIResponse } from "../@shared/interface/common";
-import Asaas from "asaas";
 
 // Função para converter um Map em JSON
 export const mapToJson = (map: Map<any, any>) => {
@@ -272,54 +271,4 @@ export function calcularIdade(dataNascimento: Date): number {
   }
 
   return idade;
-}
-
-// Função para integrar cliente ao Asaas usando Observable
-export function addClientToAsaas(clientData: any): Observable<APIResponse> {
-  return new Observable<APIResponse>((observer) => {
-    (async () => {
-      try {
-        const asaasAccessToken = await getAuthToken();
-
-        if (!asaasAccessToken) {
-          throw new Error("Token de acesso ao Asaas não fornecido!");
-        }
-
-        const asaas = new Asaas({
-          apiVersion: "v3",
-          sandbox: false, // Defina conforme necessário
-          accessToken: asaasAccessToken,
-        });
-
-        const asaasCustomerObj = {
-          name: clientData.name,
-          cpfCnpj: clientData.cpfCnpj,
-          email: clientData.email,
-          phone: normalizePhone(clientData.phone),
-          mobilePhone: normalizePhone(clientData.mobilePhone),
-          externalReference: clientData.id,
-          address: clientData.address?.street,
-          addressNumber: clientData.address?.number,
-          complement: clientData.address?.complement,
-          province: clientData.address?.city,
-          postalCode: clientData.address?.postalCode,
-        };
-
-        const createAsaasCustomer = await asaas.createCustomer(asaasCustomerObj);
-
-        if (createAsaasCustomer.success) {
-          observer.next({ success: true, data: createAsaasCustomer.data });
-          observer.complete();
-        } else {
-          throw new Error(
-            `Erro ao criar cliente no Asaas: ${JSON.stringify(
-              createAsaasCustomer.data
-            )}`
-          );
-        }
-      } catch (error) {
-        observer.error({ success: false, error: error });
-      }
-    })();
-  });
 }
