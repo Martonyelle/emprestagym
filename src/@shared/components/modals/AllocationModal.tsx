@@ -41,30 +41,22 @@ const AllocationModal: React.FC<AllocationModalProps> = ({
     error: clientsError,
   } = useClients();
 
-  // Carregar equipamentos
   const {
     data: equipments = [],
     loading: equipmentsLoading,
     error: equipmentsError,
   } = useEquipmentData();
 
-  console.log("Equipamentos carregados:", equipments);
-
-  // Estados locais para o formulário
   const [selectedClientId, setSelectedClientId] = useState<string>("");
   const [selectedEquipmentId, setSelectedEquipmentId] = useState<string>("");
   const [paymentMethod, setPaymentMethod] = useState<string>("");
   const [rentalDuration, setRentalDuration] = useState<number>(1);
   const [loadingAllocation, setLoadingAllocation] = useState<boolean>(false);
 
-  // Encontrar o equipamento selecionado
   const selectedEquipment = equipments.find(
     (e) => e.id === selectedEquipmentId
   );
 
-  console.log("Equipamento selecionado:", selectedEquipment);
-
-  // Calcular o custo total
   const totalCost = (selectedEquipment?.price ?? 0) * rentalDuration;
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -105,7 +97,6 @@ const AllocationModal: React.FC<AllocationModalProps> = ({
         allocation_date: new Date(),
       };
 
-      // Salvar a alocação
       await dataSource.saveEntity({
         path: "allocations",
         collection: allocationsCollection,
@@ -113,7 +104,6 @@ const AllocationModal: React.FC<AllocationModalProps> = ({
         status: "new",
       });
 
-      // Atualizar a quantidade disponível do equipamento
       await dataSource.saveEntity({
         path: "equipments",
         entityId: selectedEquipment.id,
@@ -135,7 +125,7 @@ const AllocationModal: React.FC<AllocationModalProps> = ({
         ),
       });
 
-      closeFn();
+      window.location.reload();
     } catch (error: any) {
       console.error("Erro ao alocar equipamento:", error);
       const errorMessage =
@@ -158,7 +148,6 @@ const AllocationModal: React.FC<AllocationModalProps> = ({
     }
   };
 
-  // Exibir carregamento se necessário
   if (clientsLoading || equipmentsLoading) {
     return (
       <Dialog open={isOpen} onClose={closeFn}>
@@ -169,7 +158,6 @@ const AllocationModal: React.FC<AllocationModalProps> = ({
     );
   }
 
-  // Exibir erro se houver
   if (clientsError || equipmentsError) {
     return (
       <Dialog open={isOpen} onClose={closeFn}>
@@ -185,14 +173,13 @@ const AllocationModal: React.FC<AllocationModalProps> = ({
       <form onSubmit={handleSubmit}>
         <DialogTitle>Alocar Equipamento</DialogTitle>
         <DialogContent>
-          {/* Seletor de Cliente */}
           <FormControl fullWidth margin="dense" required>
             <InputLabel id="client-select-label">Cliente</InputLabel>
             <Select
               labelId="client-select-label"
               id="client-select"
               value={selectedClientId}
-              onChange={(e) => setSelectedClientId(e.target.value)}
+              onChange={(e) => setSelectedClientId(e.target.value as string)}
               label="Cliente"
             >
               {clients.map((client) => (
@@ -203,34 +190,32 @@ const AllocationModal: React.FC<AllocationModalProps> = ({
             </Select>
           </FormControl>
 
-          {/* Seletor de Equipamento */}
           <FormControl fullWidth margin="dense" required>
             <InputLabel id="equipment-select-label">Equipamento</InputLabel>
             <Select
               labelId="equipment-select-label"
               id="equipment-select"
               value={selectedEquipmentId}
-              onChange={(e) => setSelectedEquipmentId(e.target.value)}
+              onChange={(e) => setSelectedEquipmentId(e.target.value as string)}
               label="Equipamento"
             >
               {equipments
                 .filter((equipment) => equipment.available_quantity > 0)
                 .map((equipment) => (
                   <MenuItem key={equipment.id} value={equipment.id}>
-                    {equipment.name}
+                    {equipment.name} (Disponível: {equipment.available_quantity})
                   </MenuItem>
                 ))}
             </Select>
           </FormControl>
 
-          {/* Forma de Pagamento */}
           <FormControl fullWidth margin="dense" required>
             <InputLabel id="payment-method-label">Forma de Pagamento</InputLabel>
             <Select
               labelId="payment-method-label"
               id="paymentMethod"
               value={paymentMethod}
-              onChange={(e) => setPaymentMethod(e.target.value)}
+              onChange={(e) => setPaymentMethod(e.target.value as string)}
               label="Forma de Pagamento"
             >
               <MenuItem value="credit_card">Cartão de Crédito</MenuItem>
@@ -241,7 +226,6 @@ const AllocationModal: React.FC<AllocationModalProps> = ({
             </Select>
           </FormControl>
 
-          {/* Duração do Aluguel */}
           <TextField
             margin="dense"
             id="rentalDuration"
@@ -256,14 +240,12 @@ const AllocationModal: React.FC<AllocationModalProps> = ({
             InputProps={{ inputProps: { min: 1 } }}
           />
 
-          {/* Exibição do Valor do Equipamento */}
           {selectedEquipment?.price !== undefined && (
             <Typography variant="subtitle1" sx={{ mt: 2 }}>
               Valor do Equipamento: R$ {selectedEquipment.price.toFixed(2)}
             </Typography>
           )}
 
-          {/* Exibição do Custo Total */}
           <Typography variant="subtitle1">
             Custo Total: R$ {totalCost.toFixed(2)}
           </Typography>

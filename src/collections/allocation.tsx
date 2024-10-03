@@ -7,6 +7,7 @@ export const allocationsCollection = buildCollection<Allocation>({
     singularName: "Alocação",
     icon: "AssignmentTurnedIn",
     group: "Gerenciamento",
+    hideFromNavigation:true,
     permissions: ({ authController }) => ({
         read: true,
         create: true,

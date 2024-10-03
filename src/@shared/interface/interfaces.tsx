@@ -1,33 +1,35 @@
 import { EntityReference } from "firecms";
 
 export interface RentalItem {
+  total_cost: number;
+  rental_duration: number;
+  allocation_date: Date;
   id: string;
   client: { id: string };
   equipment: { id: string };
-  rental_price: number;
-  rental_period: {
+  payment_method: string;
+  rental_period?: {
     start_date: string;
     end_date: string;
   };
-  payment_method: string;
-  return_date: string;
-  delivery_condition: string;
-  return_condition: string;
+  return_date?: string;
+  delivery_condition?: string;
+  return_condition?: string;
+  rental_price?: number;
+  clientName?: string;
 }
-
-
 
 export interface RentalData {
   id: string;
   clientId: string;
   equipmentId: string;
-  rental_price: number | null;
-  startDate: Date | null;
-  endDate: Date | null;
-  payment_method: string;
-  return_date: Date | null;
-  delivery_condition: string;
-  return_condition: string;
+  total_cost: number; 
+  rental_duration: number; 
+  allocation_date: Date; 
+  payment_method: string; 
+  delivery_condition?: string; 
+  return_condition?: string; 
+  return_date?: Date | null; 
 }
 
 export interface ClientData {
@@ -57,3 +59,4 @@ export interface Allocation {
   total_cost: number;
   allocation_date: Date;
 }
+

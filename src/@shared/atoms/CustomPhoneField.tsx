@@ -2,7 +2,6 @@ import React from 'react';
 import { FieldProps } from 'firecms';
 import PhoneInput from './PhoneInput';
 
-
 const CustomPhoneField: React.FC<FieldProps<string>> = ({
   value,
   setValue,

@@ -1,4 +1,3 @@
-// src/@shared/hooks/collectionData.tsx
 import { FetchCollectionProps, useDataSource, WhereFilterOp } from "firecms";
 import { useCallback } from "react";
 
@@ -23,16 +22,23 @@ function useCollectionData<M extends Record<string, any> = any>(
       throw new Error("fetchCollection is not a function on dataSource");
     }
 
-    return await dataSource.fetchCollection({
-      path: params.path,
-      collection: params.collection,
-      order: params.order || "asc",
-      orderBy: params.orderBy,
-      filter: params.filter,
-      limit: params.limit,
-      startAfter: params.startAfter,
-      searchString: params.searchString,
-    });
+    try {
+      const data = await dataSource.fetchCollection({
+        path: params.path,
+        collection: params.collection,
+        order: params.order || "asc",
+        orderBy: params.orderBy,
+        filter: params.filter,
+        limit: params.limit,
+        startAfter: params.startAfter,
+        searchString: params.searchString,
+      });
+      console.log(`Dados buscados para a coleção ${params.path}:`, data);
+      return data;
+    } catch (error) {
+      console.error(`Erro ao buscar dados na coleção ${params.path}:`, error);
+      throw error;
+    }
   }, [
     dataSource,
     params.path,
@@ -51,13 +57,20 @@ function useCollectionData<M extends Record<string, any> = any>(
       id?: string,
       status: "new" | "existing" = "new"
     ) => {
-      return await dataSource.saveEntity({
-        path: params.path,
-        collection: params.collection,
-        values: data,
-        entityId: id,
-        status: status,
-      });
+      try {
+        const result = await dataSource.saveEntity({
+          path: params.path,
+          collection: params.collection,
+          values: data,
+          entityId: id,
+          status: status,
+        });
+        console.log(`Dados salvos na coleção ${params.path}:`, result);
+        return result;
+      } catch (error) {
+        console.error(`Erro ao salvar dados na coleção ${params.path}:`, error);
+        throw error;
+      }
     },
     [dataSource, params.path, params.collection]
   );

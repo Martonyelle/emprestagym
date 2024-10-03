@@ -1,5 +1,4 @@
-import { buildCollection, buildProperty, EntityReference } from "firecms";
-import { localeCollection } from "./locales.tsx";
+import { buildCollection, buildProperty } from "firecms";
 import { tipoAparelho } from "../@shared/enums/component.tsx";
 
 export type Equipment = {
@@ -26,9 +25,6 @@ export const equipmentsCollection = buildCollection<Equipment>({
         create: true,
         delete: true
     }),
-    subcollections: [
-        localeCollection
-    ],
     properties: {
         name: {
             name: "Name",

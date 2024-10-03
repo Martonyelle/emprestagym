@@ -1,74 +1,91 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Box,
-  MenuItem,
-  FormControl,
-  Select,
-  InputLabel,
-  SelectChangeEvent,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
 } from "@mui/material";
-import { CalendarPicker } from "@mui/x-date-pickers/CalendarPicker";
-import {
-  DataGrid,
-  GridColDef,
-  GridCellParams,
-} from "@mui/x-data-grid";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DataGrid, GridColDef, GridCellParams } from "@mui/x-data-grid";
 import { useRentalData } from "../../../@shared/hooks/useRentalData";
-import { useClients } from "../../../@shared/hooks/clientData";
 import { RentalData } from "../../../@shared/interface/interfaces";
 import { ActionButton } from "../../../@shared/components/atoms/ActionButton";
 import AssignmentTurnedInIcon from "@mui/icons-material/AssignmentTurnedIn";
 import AllocationModal from "../../../@shared/components/modals/AllocationModal";
 import { useEquipmentData } from "../../../@shared/hooks/useEquipamentData";
-
+import { useDataSource, useSideEntityController } from "firecms";
+import { equipmentsCollection } from "../../../collections/equipments";
+import { allocationsCollection } from "../../../collections/allocation";
+import { clientsCollection } from "../../../collections/client/client";
 
 const RentalDashboard = () => {
-  const [clientFilter, setClientFilter] = useState<string>("");
+  const [selectedEquipmentId] = useState<string>("");
+  const [selectedReturnId, setSelectedReturnId] = useState<string | null>(null);
+  const [returnModalOpen, setReturnModalOpen] = useState<boolean>(false);
+
+  const dataSource = useDataSource();
+  const sideEntityController = useSideEntityController();
+
   const {
     data: rentalData = [],
     loading: rentalsLoading,
     error: rentalsError,
-  } = useRentalData(clientFilter);
-  const {
-    clients = [],
-    loading: clientsLoading,
-    error: clientsError,
-  } = useClients();
-  const [selectedEquipmentId, setSelectedEquipmentId] = useState<string>("");
+  } = useRentalData();
 
-  const handleClientChange = (event: SelectChangeEvent<string>) => {
-    setClientFilter(event.target.value);
+  const handleReturn = async () => {
+    if (!selectedReturnId) return;
+
+    const rentalItem = rentalData.find((item) => item.id === selectedReturnId);
+    if (!rentalItem) return;
+
+    try {
+      const equipment = equipments.find((e) => e.id === rentalItem.equipment?.id);
+      if (equipment) {
+        await dataSource.saveEntity({
+          path: "equipments",
+          entityId: equipment.id,
+          collection: equipmentsCollection,
+          values: {
+            ...equipment,
+            available_quantity: equipment.available_quantity + 1,
+          },
+          status: "existing",
+        });
+      }
+
+      const entityToDelete = await dataSource.fetchEntity({
+        path: "allocations",
+        entityId: selectedReturnId,
+        collection: allocationsCollection,
+      });
+
+      if (entityToDelete) {
+        await dataSource.deleteEntity({
+          entity: entityToDelete,
+        });
+
+        setReturnModalOpen(false);
+        setSelectedReturnId(null);
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error("Erro ao realizar a devolução:", error);
+    }
   };
 
-  const handleEquipmentChange = (event: SelectChangeEvent<string>) => {
-    setSelectedEquipmentId(event.target.value);
-  };
-
-
-  // Transformar os dados antes de passá-los para o DataGrid
   const transformedData: RentalData[] = rentalData.map((item) => ({
     id: item.id,
     clientId: item.client?.id || "",
     equipmentId: item.equipment?.id || "",
-    rental_price: item.rental_price || null,
-    startDate: item.rental_period?.start_date
-      ? new Date(item.rental_period.start_date)
-      : null,
-    endDate: item.rental_period?.end_date
-      ? new Date(item.rental_period.end_date)
-      : null,
+    total_cost: item.total_cost || 0,
+    rental_duration: item.rental_duration || 0,
+    allocation_date: item.allocation_date ? new Date(item.allocation_date) : new Date(0),
     payment_method: item.payment_method || "",
-    return_date: item.return_date ? new Date(item.return_date) : null,
-    delivery_condition: item.delivery_condition || "",
-    return_condition: item.return_condition || "",
   }));
 
   const {
-    data: equipments = [],
-    loading: equipmentsLoading,
-    error: equipmentsError,
+    data: equipments = []
   } = useEquipmentData();
 
   const getEquipmentName = (equipmentId?: string): string => {
@@ -77,15 +94,8 @@ const RentalDashboard = () => {
     return equipment ? equipment.name : "Equipamento Não Encontrado";
   };
 
-
-
-  console.log("data", transformedData);
-
-  // Função para obter o nome do cliente a partir do ID
   const getClientName = (clientId?: string): string => {
-    if (!clientId) return "Cliente Desconhecido";
-    const client = clients.find((c) => c.id === clientId);
-    return client ? client.values.name : "Cliente Não Encontrado";
+    return clientId ? clientId : "Cliente Desconhecido";
   };
 
   const columns: GridColDef[] = [
@@ -100,42 +110,26 @@ const RentalDashboard = () => {
       },
     },
     {
-      field: "rental_price",
-      headerName: "Preço do Aluguel",
+      field: "total_cost",
+      headerName: "Preço Total",
       type: "number",
       width: 150,
     },
     {
-      field: "startDate",
-      headerName: "Data de Início",
-      type: "date",
-      width: 150,
+      field: "rental_duration",
+      headerName: "Duração do Aluguel (meses)",
+      type: "number",
+      width: 200,
     },
     {
-      field: "endDate",
-      headerName: "Data de Término",
+      field: "allocation_date",
+      headerName: "Data de Alocação",
       type: "date",
       width: 150,
     },
     {
       field: "payment_method",
       headerName: "Método de Pagamento",
-      width: 150,
-    },
-    {
-      field: "return_date",
-      headerName: "Data de Devolução",
-      type: "date",
-      width: 150,
-    },
-    {
-      field: "delivery_condition",
-      headerName: "Condição na Entrega",
-      width: 150,
-    },
-    {
-      field: "return_condition",
-      headerName: "Condição na Devolução",
       width: 150,
     },
     {
@@ -147,45 +141,65 @@ const RentalDashboard = () => {
         return getEquipmentName(equipmentId);
       },
     },
+    {
+      field: "actions",
+      headerName: "Ações",
+      width: 150,
+      renderCell: (params: GridCellParams) => {
+        return (
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => {
+              setSelectedReturnId(params.row.id);
+              setReturnModalOpen(true);
+            }}
+          >
+            Devolvido
+          </Button>
+        );
+      },
+    },
   ];
+
+  const handleCreateNewClient = () => {
+    sideEntityController.open({
+      path: "clients",
+      collection: clientsCollection,
+    });
+  };
+
+  const handleCreateNewEquipment = () => {
+    sideEntityController.open({
+      path: "equipments",
+      collection: equipmentsCollection,
+    });
+  };
 
   return (
     <Box sx={{ padding: 2 }}>
       <h1>Dashboard de Alocações</h1>
 
-      {/* Container para os Seletores e Botão */}
-      <Box sx={{ display: 'flex', alignItems: 'center', marginBottom: 2 }}>
-        {/* Seletor de Cliente */}
-        <FormControl
-          variant="outlined"
-          sx={{ minWidth: 200 }}
-        >
-          <InputLabel id="client-select-label">Cliente</InputLabel>
-          <Select
-            labelId="client-select-label"
-            id="client-select"
-            value={clientFilter}
-            onChange={handleClientChange}
-            label="Cliente"
-          >
-            <MenuItem value="">
-              <em>Todos os Clientes</em>
-            </MenuItem>
-            {clientsLoading ? (
-              <MenuItem disabled>Carregando...</MenuItem>
-            ) : clientsError ? (
-              <MenuItem disabled>Erro ao carregar clientes</MenuItem>
-            ) : (
-              clients.map((client) => (
-                <MenuItem key={client.id} value={client.id}>
-                  {client.values.name}
-                </MenuItem>
-              ))
-            )}
-          </Select>
-        </FormControl>
+      <Dialog open={returnModalOpen} onClose={() => setReturnModalOpen(false)}>
+        <DialogTitle>Confirmar Devolução</DialogTitle>
+        <DialogContent>Tem certeza que deseja devolver este equipamento?</DialogContent>
+        <DialogActions>
+          <Button onClick={() => setReturnModalOpen(false)}>Cancelar</Button>
+          <Button onClick={handleReturn} color="primary">
+            Confirmar
+          </Button>
+        </DialogActions>
+      </Dialog>
 
-        {/* Botão de Alocar */}
+      <Box sx={{ display: "flex", alignItems: "center", marginBottom: 2 }}>
+        <Button variant="contained" color="primary" onClick={handleCreateNewClient}>
+          Criar Novo Cliente
+        </Button>
+
+        <Button sx={{ marginLeft: 2 }} variant="contained" color="primary" onClick={handleCreateNewEquipment}>
+          Adicionar Novo Equipamento
+        </Button>
+
         <Box sx={{ marginLeft: 2 }}>
           <ActionButton<{
             equipmentId: string;
@@ -202,35 +216,15 @@ const RentalDashboard = () => {
         </Box>
       </Box>
 
-      {/* Tabela de Alocações */}
       {rentalsLoading ? (
         <div>Carregando alocações...</div>
       ) : rentalsError ? (
-        <div style={{ color: "red" }}>
-          Erro ao carregar alocações: {rentalsError}
-        </div>
+        <div style={{ color: "red" }}>Erro ao carregar alocações: {rentalsError}</div>
       ) : (
-        <div
-          style={{ height: 400, width: "100%", marginBottom: 2 }}
-        >
-          <DataGrid
-            rows={transformedData}
-            columns={columns}
-            checkboxSelection
-            getRowId={(row) => row.id}
-          />
+        <div style={{ height: 400, width: "100%", marginBottom: 2 }}>
+          <DataGrid rows={transformedData} columns={columns} checkboxSelection getRowId={(row) => row.id} />
         </div>
       )}
-
-      {/* Calendário */}
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <CalendarPicker
-          date={new Date()}
-          onChange={(date) =>
-            console.log("Data Selecionada:", date)
-          }
-        />
-      </LocalizationProvider>
     </Box>
   );
 };

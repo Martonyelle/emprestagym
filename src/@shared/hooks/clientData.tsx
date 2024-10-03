@@ -1,3 +1,4 @@
+// src/@shared/hooks/clientData.tsx
 import { useState, useEffect } from "react";
 import useCollectionData from "./collectionData";
 import { clientsCollection } from "../../collections/client/client";
@@ -26,7 +27,7 @@ export const useClients = () => {
       }
     };
     fetchClients();
-  }, []);
+  }, [getData]);
 
   return { clients, loading, error };
 };

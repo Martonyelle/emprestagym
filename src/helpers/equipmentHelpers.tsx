@@ -1,5 +1,3 @@
-// equipmentHelpers.ts
-
 import { getAuthToken } from './authHelpers';
 import { API_URL } from '../config';
 

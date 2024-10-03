@@ -8,5 +8,6 @@ export interface ActionButtonProps<T = undefined> {
   triggerModal?: React.ComponentType<{ data: T; isOpen: boolean; closeFn: () => void }>;
   clickFn?: () => Promise<{ success: boolean; message?: string }>;
   color?: 'inherit' | 'primary' | 'secondary' | 'default' | 'error' | 'info' | 'success' | 'warning';
+  onClose?: () => void;
 }
 

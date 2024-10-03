@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import * as creditCardBrands from '../../credit-cards-brands.json';
-
-import './CreditCardTokenPreview.css'
 import { Paper, Skeleton, Typography } from "@mui/material";
+import './CrediCardTokenPreview.css';
 
 interface CreditCardTokenPreviewProps {
     brand?: string;
